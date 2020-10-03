@@ -1,0 +1,11 @@
+FROM neo4j:enterprise
+
+ENV NEO4J_AUTH=neo4j/docker-graph
+
+ENV NEO4JLABS_PLUGINS='["apoc"]'
+
+ENV NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+
+EXPOSE 7474 7473 7687
+
+CMD ["neo4j"]
