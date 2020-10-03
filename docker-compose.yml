@@ -3,6 +3,7 @@ version: '3'
 services:
   neo4j:
     image: neo4j:enterprise
+    container_name: permits_neo4j
     ports:
       - 7474:7474
       - 7687:7687
@@ -17,6 +18,7 @@ services:
 
   api:
     build: ./api
+    container_name: permits_api
     ports:
       - 4001:4001
     environment:
@@ -33,6 +35,7 @@ services:
 
   ui:
     build: ./client
+    container_name: permits_ui
     volumes:
       - './client:/app'
       - './client/app/node_modules'
