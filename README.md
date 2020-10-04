@@ -2,7 +2,7 @@
 
 The project is currently dockerized. To get started run in the terminal do these TWO things:
 
-1. cd into the "client" folder and run "yarn install"
+1. cd into the "client" folder and run "yarn install" cd .. back into the main folder
 2. in the terminal run "docker-compose up". 
 
 
