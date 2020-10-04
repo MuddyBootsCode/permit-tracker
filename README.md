@@ -19,7 +19,7 @@ This will build the project and it's containers, this keeps you from having to i
 
 1. cd into the neo4j director and run:
    ```
-   docker cp permit_tryout_csv.csv permits_neo4j:/var/lib/neo4j/imports
+   docker cp permit_tryout_csv.csv permits_neo4j:/var/lib/neo4j/import
    ```
    This will copy the csv file into the imports directory of the neo4j container
 2. Then open your neo4j browser and paste this command, ensure multiline query editor is enabled:
