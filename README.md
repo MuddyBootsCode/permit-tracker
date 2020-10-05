@@ -46,9 +46,12 @@ This will build the project and it's containers, this keeps you from having to i
    MERGE (p)-[:SUBMITTED_ON]->(s);
    
    MATCH (p:Permit)
-   WHERE p.ApprovedDate is not null
+   WHERE p.ApprovedDate IS NOT NULL
    MERGE (a:ApprovedDate {date: p.ApprovedDate})
    MERGE (p)-[:APPROVED_ON]->(a);
+   
+   MATCH (p:Permit) set p.surfaceHolePoint = point({ latitude:toFloat(p.SurfaceLatitudeWGS84), longitude: tofloat(p.SurfaceLongitudeWGS84), crs: 'WGS-84'});
+   MATCH (p:Permit) set p.bottomHolePoint = point({ latitude:toFloat(p.BottomHoleLatitudeWGS84), longitude: tofloat(p.BottomHoleLongitudeWGS84), crs: 'WGS-84'});
    ```
   This will populate the local data base with our permit data
    

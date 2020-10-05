@@ -17,5 +17,6 @@
     "*.{js,css}": [
       "prettier --write --ignore-unknown"
     ]
-  }
+  },
+  "dependencies": {}
 }

@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ApolloProvider } from '@apollo/client';
 import client from './apolloClient';
+import { RecoilRoot } from 'recoil';
 
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <Suspense fallback='...loading'>
+        <RecoilRoot>
+          <App />
+        </RecoilRoot>
+      </Suspense>
     </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
