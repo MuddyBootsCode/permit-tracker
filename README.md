@@ -29,11 +29,11 @@ This will build the project and it's containers, this keeps you from having to i
    
    CALL apoc.load.csv('permit_tryout_csv.csv')
    YIELD map as permit
-   CREATE (p:Permit {id: permit['PermitID']}) with p, permit
+   CREATE (p:Permit {id: permit["PermitID"]}) with p, permit
    UNWIND keys(permit) as key
    CALL apoc.create.setProperty(p, key, permit[key])
    YIELD node as n
-   MERGE (s:State {name: 'TEXAS'})
+   MERGE (s:State {name: "TEXAS"})
    MERGE (n)-[:FILED_IN_STATE]->(s)
    MERGE (c:County {name: "Midland"})
    MERGE (n)-[:FILED_IN_COUNTY]->(c)
