@@ -1,3 +1,9 @@
 type User {
     name: String
 }
+
+type Permit {
+    surfaceHolePoint: Point
+    bottomHolePoint: Point
+    PermitType: String
+}

@@ -43,7 +43,7 @@ services:
       - 3000:3000
     environment:
       - CI=true
-      - REACT_APP_GRAPHQL_URI=/graphql
+      - REACT_APP_GRAPHQL_URI=http://localhost:4001/graphql
       - PROXY=http://api:4001/graphql
     links:
       - api
