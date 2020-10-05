@@ -10,6 +10,7 @@ This will build the project and it's containers, this keeps you from having to i
 
 # The Containers:
 
-1. landservices_ui - landservices_ui contains the base "create react app" piece of the project, the apollo client instance is already installed as well. Starts up on localhost:3000.
-2. landservices_api - containers the Apollo Server and GraphQL schema for the project, starts up on localhost:4001/graphql.
-3. landservices_neo4j - Docker's latest Neo4j Enterprise version, currently loads requried plug-ins on load but I need to find some different ways to handle that. Will persist data stored in the database. I need to work on seeding it, starts up on localhost:7474.
+1. permits_ui - landservices_ui contains the base "create react app" piece of the project, the apollo client instance is already installed as well. Starts up on localhost:3000.
+2. permits_api - containers the Apollo Server and GraphQL schema for the project, starts up on localhost:4001/graphql.
+3. permits_neo4j - Docker's latest Neo4j Enterprise version, currently loads required plug-ins on load but, I need to find some different ways to handle that. Will persist data stored in the database. I need to work on seeding it, starts up on localhost:7474.
+
