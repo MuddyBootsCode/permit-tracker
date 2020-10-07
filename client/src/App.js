@@ -1,11 +1,13 @@
 import './App.css';
 import React from 'react';
 import Permits from './components/Permits';
+import Map from './components/Map';
 
 function App() {
   return (
     <div className='App'>
-      <Permits />
+      {/*<Permits />*/}
+      <Map />
     </div>
   );
 }
