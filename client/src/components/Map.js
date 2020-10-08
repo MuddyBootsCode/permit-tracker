@@ -26,21 +26,17 @@ const PERMIT_QUERY = gql`
         latitude
         longitude
       }
+      approvedDate {
+        date
+      }
+      submittedDate {
+        date
+      }
     }
   }
 `;
 
 const Map = () => {
-  const [toolTip, setToolTip] = React.useState({});
-
-  const onClick = (info) => {
-    console.log(info, ' from on click');
-    if (info.object) {
-      // eslint-disable-next-line
-      alert(`${info.object.name}`);
-    }
-  };
-
   const { data, loading, error } = useQuery(PERMIT_QUERY);
 
   if (loading) return <div>...Loading</div>;
@@ -52,16 +48,35 @@ const Map = () => {
     return {
       name: p.PermitType,
       coordinates: [surfaceHolePoint.longitude, surfaceHolePoint.latitude],
+      submittedDate: p.submittedDate.date.split('T')[0],
+      approvedDate: p.approvedDate.date.split('T')[0],
     };
   });
-
-  console.log(toolTip, ' Tool tip');
 
   return (
     <DeckGL
       initialViewState={INITIAL_VIEW_STATE}
       controller={true}
-      getTooltip={({ object }) => object && object.name}
+      getTooltip={({ object }) =>
+        object && {
+          html: `<div>Permit Type: ${object.name}
+              <br/>Lat: ${!object.coordinates ? 'N/A' : object.coordinates[1]}
+              <br/>Long: ${!object.coordinates ? 'N/A' : object.coordinates[0]}
+              <br/>Submitted Date: ${
+                !object.submittedDate ? 'N/A' : object.submittedDate
+              }
+              <br/>Approved Date: ${
+                !object.approvedDate ? 'N/A' : object.approvedDate
+              }
+              </div>`,
+          style: {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: 'white',
+          },
+        }
+      }
     >
       <StaticMap
         mapboxApiAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
@@ -70,7 +85,7 @@ const Map = () => {
       <GeoJsonLayer
         id='county-of-midland'
         data={midlandCounty}
-        pickable={true}
+        pickable={false}
         stroked={true}
         lineWidthMinPixels={2}
         filled={false}
@@ -78,7 +93,7 @@ const Map = () => {
       <GeoJsonLayer
         id='city-of-midland'
         data={cityOfMidland}
-        pickable={true}
+        pickable={false}
         stroked={true}
         lineWidthMinPixels={1}
         filled={false}
@@ -92,8 +107,6 @@ const Map = () => {
         radiusMinPixels={4}
         getPosition={(d) => d.coordinates}
         getFillColor={(d) => [255, 0, 0]}
-        onClick={onClick}
-        onHover={(info) => setToolTip(info)}
       />
     </DeckGL>
   );

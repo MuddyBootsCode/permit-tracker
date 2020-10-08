@@ -6,4 +6,16 @@ type Permit {
     surfaceHolePoint: Point
     bottomHolePoint: Point
     PermitType: String
+    approvedDate: ApprovedDate @relation(name: "APPROVED_ON", direction: "OUT")
+    submittedDate: SubmittedDate @relation(name: "SUBMITTED_ON", direction: "OUT")
+}
+
+type SubmittedDate {
+    date: String
+    permit: Permit @relation(name: "SUBMITTED_ON", direction: "IN")
+}
+
+type ApprovedDate {
+    date: String
+    permit: Permit @relation(name: "APPROVED_ON", direction: "IN")
 }

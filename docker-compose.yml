@@ -4,6 +4,8 @@ services:
   neo4j:
     image: neo4j:enterprise
     container_name: permits_neo4j
+    volumes:
+      - ./data/neo4j-data:/data
     ports:
       - 7474:7474
       - 7687:7687
