@@ -20,6 +20,9 @@ services:
 
   api:
     build: ./api
+    volumes:
+      - './api:/index.js'
+      - './api:/schema.graphql'
     container_name: permits_api
     ports:
       - 4001:4001
@@ -40,7 +43,7 @@ services:
     container_name: permits_ui
     volumes:
       - './client:/app'
-      - './client/app/node_modules'
+      - './client:/src/app/node_modules'
     ports:
       - 3000:3000
     environment:

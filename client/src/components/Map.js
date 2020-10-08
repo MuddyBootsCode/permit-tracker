@@ -38,6 +38,9 @@ const PERMIT_QUERY = gql`
 
 const Map = () => {
   const { data, loading, error } = useQuery(PERMIT_QUERY);
+  const [viewPort, setViewPort] = React.useState({
+    ...INITIAL_VIEW_STATE,
+  });
 
   if (loading) return <div>...Loading</div>;
 
@@ -55,7 +58,13 @@ const Map = () => {
 
   return (
     <DeckGL
+      {...viewPort}
+      onViewportChange={(viewPort) => {
+        setViewPort(viewPort);
+      }}
       initialViewState={INITIAL_VIEW_STATE}
+      height={'100vh'}
+      width={'100vw'}
       controller={true}
       getTooltip={({ object }) =>
         object && {

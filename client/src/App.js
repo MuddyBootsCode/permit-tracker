@@ -1,13 +1,28 @@
 import './App.css';
 import React from 'react';
-import Permits from './components/Permits';
-import Map from './components/Map';
+import Nav from './components/Nav';
+import MapControls from './components/MapControls';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+  App: {
+    display: 'grid',
+    gridTemplateRows: '10% 90%',
+    marginBottom: 1,
+  },
+}));
 
 function App() {
+  const classes = useStyles();
+
   return (
-    <div className='App'>
-      {/*<Permits />*/}
-      <Map />
+    <div className={classes.App}>
+      <div id='nav'>
+        <Nav />
+      </div>
+      <div>
+        <MapControls />
+      </div>
     </div>
   );
 }
