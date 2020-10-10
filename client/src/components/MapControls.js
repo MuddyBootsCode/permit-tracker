@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Map from './Map';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { gql, useQuery } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,8 +22,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const COUNTY_QUERY = gql`
+  query County($name: String) {
+    County(name: $name) {
+      name
+      geometry
+    }
+  }
+`;
+
 const MapControls = () => {
   const classes = useStyles();
+  const [county, setCounty] = useState('Martin');
+  const { data, error, loading } = useQuery(COUNTY_QUERY, {
+    variables: { name: county },
+  });
+  const [countyGeo, setCountyGeo] = useState({});
+
+  useEffect(() => {
+    if (data) {
+      setCountyGeo(JSON.parse(data.County[0].geometry));
+    }
+  }, [data]);
+
+  if (loading) return <div>...Loading</div>;
+
+  if (error) return <div>Something went wrong</div>;
+
   return (
     <div className={classes.root}>
       <div className={classes.controls}>
@@ -30,7 +56,7 @@ const MapControls = () => {
         <hr className={classes.hr} />
       </div>
       <div id='map-controls' style={{ position: 'relative' }}>
-        <Map />
+        <Map county={countyGeo} />
       </div>
     </div>
   );

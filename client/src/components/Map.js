@@ -36,23 +36,11 @@ const PERMIT_QUERY = gql`
   }
 `;
 
-const Map = () => {
+const Map = ({ county }) => {
   const { data, loading, error } = useQuery(PERMIT_QUERY);
   const [viewPort, setViewPort] = React.useState({
     ...INITIAL_VIEW_STATE,
   });
-  //
-  // useEffect(() => {
-  //   console.log('Use effect called')
-  //   try {
-  //     const fetchData = async () => {
-  //       const res = await fetch('https://raw.githubusercontent.com/TNRIS/tx.geojson/master/counties/tx_counties.geojson');
-  //       console.log(res, ' response from geo')
-  //     };
-  //     fetchData();
-  //   } catch (error) {
-  //   }
-  // }, []);
 
   if (loading) return <div>...Loading</div>;
 
@@ -105,7 +93,7 @@ const Map = () => {
       />
       <GeoJsonLayer
         id='county-of-midland'
-        data={midlandCounty}
+        data={county}
         pickable={false}
         stroked={true}
         lineWidthMinPixels={2}
