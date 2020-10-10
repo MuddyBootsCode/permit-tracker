@@ -54,3 +54,26 @@ This will build the project and it's containers, this keeps you from having to i
    ```
   This will populate the local data base with our permit data
    
+# Adding County GeoJson
+
+1. cd into the neo4j director and run:
+   ```
+   docker cp texas_counties_geo.csv permits_neo4j:/var/lib/neo4j/import
+   ```
+   This will copy the csv file into the import directory of the neo4j container, where we can then import it.
+2. Open your Neo4j browser window, copy and paste this command:
+   ```
+   CALL apoc.load.csv('texas_counties_geo.csv')
+   yield list
+   where list[0] <> "Midland"
+   MERGE(:County {name: list[0], geometry: list[1]})
+   RETURN list[0];
+   
+   CALL apoc.load.csv('texas_counties_geo.csv')
+   yield list
+   MATCH (c:County {name: "Midland"})
+   where list[0] = "Midland"
+   set c.geometry = list[1]
+   RETURN list[0];
+   ```
+   This will populate the DB with all Texas counties and their geo data

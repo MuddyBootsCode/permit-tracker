@@ -10,7 +10,7 @@ const INITIAL_VIEW_STATE = {
   longitude: -102.024326,
   latitude: 31.870896,
   pitch: 0,
-  zoom: 9,
+  zoom: 9.5,
   bearing: 0,
 };
 
@@ -41,6 +41,18 @@ const Map = () => {
   const [viewPort, setViewPort] = React.useState({
     ...INITIAL_VIEW_STATE,
   });
+  //
+  // useEffect(() => {
+  //   console.log('Use effect called')
+  //   try {
+  //     const fetchData = async () => {
+  //       const res = await fetch('https://raw.githubusercontent.com/TNRIS/tx.geojson/master/counties/tx_counties.geojson');
+  //       console.log(res, ' response from geo')
+  //     };
+  //     fetchData();
+  //   } catch (error) {
+  //   }
+  // }, []);
 
   if (loading) return <div>...Loading</div>;
 
