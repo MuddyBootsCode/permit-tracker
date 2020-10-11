@@ -2,7 +2,6 @@ import React from 'react';
 import DeckGL from 'deck.gl';
 import { StaticMap } from 'react-map-gl';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
-import { midlandCounty } from '../data/midlandCounty';
 import { cityOfMidland } from '../data/cityOfMidland';
 import { gql, useQuery } from '@apollo/client';
 
@@ -62,13 +61,14 @@ const Map = ({ county }) => {
       onViewportChange={(viewPort) => {
         setViewPort(viewPort);
       }}
-      initialViewState={INITIAL_VIEW_STATE}
+      controller={true}
+      initialViewState={viewPort}
       height={'100vh'}
       width={'100vw'}
-      controller={true}
       getTooltip={({ object }) =>
         object && {
-          html: `<div>Permit Type: ${object.name}
+          html: `
+              <div>Permit Type: ${object.name}
               <br/>Lat: ${!object.coordinates ? 'N/A' : object.coordinates[1]}
               <br/>Long: ${!object.coordinates ? 'N/A' : object.coordinates[0]}
               <br/>Submitted Date: ${
@@ -89,15 +89,16 @@ const Map = ({ county }) => {
     >
       <StaticMap
         mapboxApiAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
-        preventStyleDiffing={true}
+        mapStyle='mapbox://styles/mapbox/dark-v10'
       />
       <GeoJsonLayer
-        id='county-of-midland'
+        id='county'
         data={county}
         pickable={false}
         stroked={true}
         lineWidthMinPixels={2}
         filled={false}
+        getLineColor={[52, 168, 50]}
       />
       <GeoJsonLayer
         id='city-of-midland'

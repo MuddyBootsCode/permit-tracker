@@ -22,6 +22,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const MapStyles = [
+  { name: 'Streets', url: 'mapbox://styles/mapbox/streets-v11' },
+  { name: 'Outdoors', url: 'mapbox://styles/mapbox/outdoors-v11' },
+  { name: 'Light', url: 'mapbox://styles/mapbox/light-v10' },
+  { name: 'Dark', url: 'mapbox://styles/mapbox/dark-v10' },
+  { name: 'Satellite', url: 'mapbox://styles/mapbox/satellite-v9' },
+  {
+    name: 'Satellite with Streets',
+    url: 'mapbox://styles/mapbox/satellite-streets-v11',
+  },
+];
+
 const COUNTY_QUERY = gql`
   query County($name: String) {
     County(name: $name) {
@@ -31,9 +43,18 @@ const COUNTY_QUERY = gql`
   }
 `;
 
+function IsJsonString(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 const MapControls = () => {
   const classes = useStyles();
-  const [county, setCounty] = useState('Martin');
+  const [county, setCounty] = useState('Midland');
   const { data, error, loading } = useQuery(COUNTY_QUERY, {
     variables: { name: county },
   });
@@ -41,7 +62,9 @@ const MapControls = () => {
 
   useEffect(() => {
     if (data) {
-      setCountyGeo(JSON.parse(data.County[0].geometry));
+      IsJsonString(data.County[0].geometry)
+        ? setCountyGeo(JSON.parse(data.County[0].geometry))
+        : setCountyGeo('');
     }
   }, [data]);
 
