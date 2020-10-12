@@ -207,7 +207,7 @@ const MapControls = () => {
         <hr className={classes.hr} />
         <Autocomplete
           value={value}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option) => (option.name ? option.name : '')}
           onChange={(event, newValue) => {
             setValue(newValue);
           }}
