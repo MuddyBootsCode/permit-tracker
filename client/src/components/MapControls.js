@@ -54,7 +54,7 @@ function IsJsonString(str) {
 
 const MapControls = () => {
   const classes = useStyles();
-  const [county, setCounty] = useState('Midland');
+  const [county, setCounty] = useState('Reeves');
   const { data, error, loading } = useQuery(COUNTY_QUERY, {
     variables: { name: county },
   });

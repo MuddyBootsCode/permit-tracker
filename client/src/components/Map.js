@@ -1,6 +1,10 @@
 import React from 'react';
 import DeckGL from 'deck.gl';
-import { StaticMap } from 'react-map-gl';
+import {
+  StaticMap,
+  NavigationControl,
+  _MapContext as MapContext,
+} from 'react-map-gl';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { cityOfMidland } from '../data/cityOfMidland';
 import { gql, useQuery } from '@apollo/client';
@@ -55,8 +59,11 @@ const Map = ({ county }) => {
     };
   });
 
+  console.log(window.innerWidth);
+
   return (
     <DeckGL
+      ContextProvider={MapContext.Provider}
       {...viewPort}
       onViewportChange={(viewPort) => {
         setViewPort(viewPort);
@@ -91,6 +98,9 @@ const Map = ({ county }) => {
         mapboxApiAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
         mapStyle='mapbox://styles/mapbox/dark-v10'
       />
+      <div style={{ position: 'absolute', zIndex: 1 }}>
+        <NavigationControl />
+      </div>
       <GeoJsonLayer
         id='county'
         data={county}
