@@ -73,8 +73,6 @@ const Map = ({ county }) => {
     };
   });
 
-  console.log(window.innerWidth);
-
   return (
     <DeckGL
       ContextProvider={MapContext.Provider}
@@ -115,15 +113,17 @@ const Map = ({ county }) => {
       <div style={{ position: 'absolute', zIndex: 1, right: 0 }}>
         <NavigationControl />
       </div>
-      <GeoJsonLayer
-        id='county'
-        data={county}
-        pickable={false}
-        stroked={true}
-        lineWidthMinPixels={2}
-        filled={false}
-        getLineColor={[52, 168, 50]}
-      />
+      {county && (
+        <GeoJsonLayer
+          id='county'
+          data={county}
+          pickable={false}
+          stroked={true}
+          lineWidthMinPixels={2}
+          filled={false}
+          getLineColor={[52, 168, 50]}
+        />
+      )}
       <GeoJsonLayer
         id='city-of-midland'
         data={cityOfMidland}

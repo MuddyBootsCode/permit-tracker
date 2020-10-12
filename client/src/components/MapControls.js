@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Map from './Map';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   map: {
@@ -22,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
   hr: {
     width: '80%',
     color: 'black',
+  },
+  button: {
+    marginTop: 10,
+    marginBottom: 10,
   },
 }));
 
@@ -57,11 +63,16 @@ function IsJsonString(str) {
 
 const MapControls = () => {
   const classes = useStyles();
-  const [county, setCounty] = useState('Reeves');
-  const { data, error, loading } = useQuery(COUNTY_QUERY, {
-    variables: { name: county },
-  });
-  const [countyGeo, setCountyGeo] = useState({});
+  const [mapControlsState, setMapControlsState] = useState({ countyName: '' });
+  const [getCounty, { data, loading, error }] = useLazyQuery(COUNTY_QUERY);
+  const [countyGeo, setCountyGeo] = useState(null);
+
+  const handleChange = (e) => {
+    e.preventDefault();
+    const name = e.target.name;
+    const value = e.target.value;
+    setMapControlsState({ ...mapControlsState, [name]: value });
+  };
 
   useEffect(() => {
     if (data) {
@@ -75,6 +86,8 @@ const MapControls = () => {
 
   if (error) return <div>Something went wrong</div>;
 
+  console.log(mapControlsState);
+
   return (
     <Grid container spacing={0} className={classes.root} id='map-controls'>
       <Grid
@@ -86,6 +99,25 @@ const MapControls = () => {
       >
         <Typography variant='h6'>Map Controls</Typography>
         <hr className={classes.hr} />
+        <TextField
+          required
+          id='county-field'
+          label='Required'
+          defaultValue='County'
+          name='countyName'
+          onChange={handleChange}
+        />
+        <Button
+          variant='contained'
+          color='primary'
+          className={classes.button}
+          onClick={() =>
+            getCounty({ variables: { name: mapControlsState.countyName } })
+          }
+          disabled={mapControlsState.countyName.length === 0}
+        >
+          Select County
+        </Button>
       </Grid>
       <Grid item xs={12} id='map-grid-container' className={classes.map}>
         <Map county={countyGeo} />
