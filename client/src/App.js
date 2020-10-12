@@ -3,11 +3,12 @@ import React from 'react';
 import Nav from './components/Nav';
 import MapControls from './components/MapControls';
 import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Map from './components/Map';
+import { Container } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   App: {
-    display: 'grid',
-    gridTemplateRows: '10% 90%',
     marginBottom: 1,
   },
 }));
@@ -17,12 +18,14 @@ function App() {
 
   return (
     <div className={classes.App}>
-      <div id='nav'>
-        <Nav />
-      </div>
-      <div>
-        <MapControls />
-      </div>
+      <Grid container spacing={1} direction='column'>
+        <Grid item xs={12} id='nav'>
+          <Nav />
+        </Grid>
+        <Grid item xs={12}>
+          <MapControls />
+        </Grid>
+      </Grid>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { cityOfMidland } from '../data/cityOfMidland';
 import { gql, useQuery } from '@apollo/client';
+import { CircularProgress } from '@material-ui/core';
 
 const INITIAL_VIEW_STATE = {
   longitude: -102.024326,
@@ -45,7 +46,20 @@ const Map = ({ county }) => {
     ...INITIAL_VIEW_STATE,
   });
 
-  if (loading) return <div>...Loading</div>;
+  if (loading)
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          width: '100vw',
+        }}
+      >
+        <CircularProgress size={100} />
+      </div>
+    );
 
   if (error) return <div>Something went wrong</div>;
 
@@ -98,7 +112,7 @@ const Map = ({ county }) => {
         mapboxApiAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
         mapStyle='mapbox://styles/mapbox/dark-v10'
       />
-      <div style={{ position: 'absolute', zIndex: 1 }}>
+      <div style={{ position: 'absolute', zIndex: 1, right: 0 }}>
         <NavigationControl />
       </div>
       <GeoJsonLayer

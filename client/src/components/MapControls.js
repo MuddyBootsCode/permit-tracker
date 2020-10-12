@@ -3,18 +3,21 @@ import Map from './Map';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { gql, useQuery } from '@apollo/client';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 3fr',
+  map: {
+    padding: 0,
+    margin: 0,
+    display: 'block',
+    position: 'relative',
   },
   controls: {
     display: 'flex',
-    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 10,
+    flexDirection: 'column',
+    paddingBottom: 10,
   },
   hr: {
     width: '80%',
@@ -73,15 +76,21 @@ const MapControls = () => {
   if (error) return <div>Something went wrong</div>;
 
   return (
-    <div className={classes.root}>
-      <div className={classes.controls}>
+    <Grid container spacing={0} className={classes.root} id='map-controls'>
+      <Grid
+        item
+        xs={12}
+        id='map-controls-grid-container'
+        justifyContent='center'
+        className={classes.controls}
+      >
         <Typography variant='h6'>Map Controls</Typography>
         <hr className={classes.hr} />
-      </div>
-      <div id='map-controls' style={{ position: 'relative' }}>
+      </Grid>
+      <Grid item xs={12} id='map-grid-container' className={classes.map}>
         <Map county={countyGeo} />
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 
