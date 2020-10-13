@@ -60,35 +60,6 @@ const Map = ({ layers = [] }) => {
       <div style={{ position: 'absolute', zIndex: 1, right: 10 }}>
         <NavigationControl />
       </div>
-      {/*{county && (*/}
-      {/*  <GeoJsonLayer*/}
-      {/*    id='county'*/}
-      {/*    data={county}*/}
-      {/*    pickable={false}*/}
-      {/*    stroked={true}*/}
-      {/*    lineWidthMinPixels={2}*/}
-      {/*    filled={false}*/}
-      {/*    getLineColor={[52, 168, 50]}*/}
-      {/*  />*/}
-      {/*)}*/}
-      {/*<GeoJsonLayer*/}
-      {/*  id='city-of-midland'*/}
-      {/*  data={cityOfMidland}*/}
-      {/*  pickable={false}*/}
-      {/*  stroked={true}*/}
-      {/*  lineWidthMinPixels={1}*/}
-      {/*  filled={false}*/}
-      {/*  getLineColor={[0, 0, 250]}*/}
-      {/*/>*/}
-      {/*<ScatterplotLayer*/}
-      {/*  id='permit-layer'*/}
-      {/*  data={layerData}*/}
-      {/*  pickable={true}*/}
-      {/*  stroked={true}*/}
-      {/*  radiusMinPixels={4}*/}
-      {/*  getPosition={(d) => d.coordinates}*/}
-      {/*  getFillColor={(d) => [255, 0, 0]}*/}
-      {/*/>*/}
     </DeckGL>
   );
 };
