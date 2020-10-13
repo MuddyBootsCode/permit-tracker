@@ -268,7 +268,7 @@ const MapControls = () => {
     data: filteredPermitData,
     pickable: true,
     stroked: true,
-    radiusMinPixels: 4,
+    radiusMinPixels: 2,
     getPosition: (d) => d.coordinates,
     getFillColor: (d) => [255, 0, 0],
   });
@@ -278,7 +278,7 @@ const MapControls = () => {
       id: 'county-layer',
       data: countyGeo,
       stroked: true,
-      lineWidthMinPixels: 1,
+      lineWidthMinPixels: 2,
       filled: false,
       getLineColor: [52, 168, 50],
     });
