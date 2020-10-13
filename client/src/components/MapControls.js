@@ -284,35 +284,53 @@ const MapControls = () => {
       >
         <Typography variant='h6'>Map Controls</Typography>
         <hr className={classes.hr} />
-        <Autocomplete
-          value={value}
-          getOptionLabel={(option) => (option.name ? option.name : '')}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
-          inputValue={inputValue}
-          onInputChange={(event, newInputValue) => {
-            setInputValue(newInputValue);
-          }}
-          id='controllable-states-demo'
-          options={countyNames}
-          style={{ width: 300 }}
-          renderInput={(params) => (
-            <TextField {...params} label='Select County' variant='outlined' />
-          )}
-        />
-        <Button
-          variant='contained'
-          color='primary'
-          className={classes.button}
-          onClick={() => queryCountyGeo(value)}
-        >
-          Select County
-        </Button>
-        {countyQueryLoading && <div>...Loading County Data</div>}
         <Grid item xs={12}>
-          <Typography id='range-slider' gutterBottom>
-            Permit Date Range - 2017 Start Date: {startDate} End Date: {endDate}
+          <div style={{ display: 'flex', marginBottom: 15 }}>
+            <Autocomplete
+              value={value}
+              getOptionLabel={(option) => (option.name ? option.name : '')}
+              onChange={(event, newValue) => {
+                setValue(newValue);
+              }}
+              inputValue={inputValue}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+              }}
+              id='controllable-states-demo'
+              options={countyNames}
+              style={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label='Select County'
+                  variant='outlined'
+                />
+              )}
+            />
+            <Button
+              variant='contained'
+              color='primary'
+              className={classes.button}
+              onClick={() => queryCountyGeo(value)}
+              style={{ marginLeft: 15 }}
+            >
+              Select County
+            </Button>
+            {countyQueryLoading && <div>...Loading County Data</div>}
+          </div>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            id='range-slider'
+            gutterBottom
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            Permit Date Range - 2017 <br /> Start Date: {startDate} <br /> End
+            Date: {endDate}
           </Typography>
           <br />
           <br />

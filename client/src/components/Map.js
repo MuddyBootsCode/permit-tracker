@@ -57,7 +57,7 @@ const Map = ({ layers = [] }) => {
         mapboxApiAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
         mapStyle='mapbox://styles/mapbox/dark-v10'
       />
-      <div style={{ position: 'absolute', zIndex: 1, right: 0 }}>
+      <div style={{ position: 'absolute', zIndex: 1, right: 10 }}>
         <NavigationControl />
       </div>
       {/*{county && (*/}
