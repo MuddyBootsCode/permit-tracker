@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Map from './Map';
 import { makeStyles } from '@material-ui/core/styles';
-import { CircularProgress, Typography } from '@material-ui/core';
+import { CircularProgress, Slider, Typography } from '@material-ui/core';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import Grid from '@material-ui/core/Grid';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import { cityOfMidland } from '../data/cityOfMidland';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const useStyles = makeStyles((theme) => ({
   map: {
@@ -43,6 +44,57 @@ const MapStyles = [
   {
     name: 'Satellite with Streets',
     url: 'mapbox://styles/mapbox/satellite-streets-v11',
+  },
+];
+
+const marks = [
+  {
+    value: 0,
+    label: 'Jan',
+  },
+  {
+    value: 31,
+    label: 'Feb',
+  },
+  {
+    value: 60,
+    label: 'Mar',
+  },
+  {
+    value: 91,
+    label: 'April',
+  },
+  {
+    value: 121,
+    label: 'May',
+  },
+  {
+    value: 152,
+    label: 'June',
+  },
+  {
+    value: 182,
+    label: 'July',
+  },
+  {
+    value: 213,
+    label: 'Aug',
+  },
+  {
+    value: 244,
+    label: 'Sept',
+  },
+  {
+    value: 274,
+    label: 'Oct',
+  },
+  {
+    value: 305,
+    label: 'Nov',
+  },
+  {
+    value: 335,
+    label: 'Dec',
   },
 ];
 
@@ -98,6 +150,9 @@ const MapControls = () => {
   const classes = useStyles();
   const [value, setValue] = useState('Anderson');
   const [inputValue, setInputValue] = useState('');
+  const [dateRange, setDateRange] = useState([0, 365]);
+  const [startDate, setStartDate] = useState('01/01/2017');
+  const [endDate, setEndDate] = useState('12/31/2017');
   const {
     data: nameData,
     loading: nameQueryLoading,
@@ -115,6 +170,30 @@ const MapControls = () => {
   const [countyGeo, setCountyGeo] = useState(null);
 
   const layers = [];
+
+  const valueLabelFormat = (dateRange) => {
+    const date = new Date(2017, 0, dateRange);
+    const newString = date.toLocaleDateString();
+    return newString;
+  };
+
+  const ValueLabelComponent = (props) => {
+    const { children, open, value } = props;
+
+    return (
+      <Tooltip open={open} enterTouchDelay={0} placement='top' title={value}>
+        {children}
+      </Tooltip>
+    );
+  };
+
+  const dateValueChange = (event, newValue) => {
+    setDateRange(newValue);
+    setStartDate(valueLabelFormat(dateRange[0]));
+    setEndDate(valueLabelFormat(dateRange[1]));
+  };
+
+  console.log(startDate, endDate);
 
   const cityLayer = new GeoJsonLayer({
     id: 'city-of-Midland',
@@ -231,6 +310,27 @@ const MapControls = () => {
           Select County
         </Button>
         {countyQueryLoading && <div>...Loading County Data</div>}
+        <Grid item xs={12}>
+          <Typography id='range-slider' gutterBottom>
+            Permit Date Range - 2017 Start Date: {startDate} End Date: {endDate}
+          </Typography>
+          <br />
+          <br />
+          <div>
+            <Slider
+              value={dateRange}
+              onChange={dateValueChange}
+              valueLabelDisplay='off'
+              ValueLabelComponent={ValueLabelComponent}
+              style={{ width: 600 }}
+              valueLabelFormat={valueLabelFormat}
+              max={365}
+              min={1}
+              step={1}
+              marks={marks}
+            />
+          </div>
+        </Grid>
       </Grid>
       <Grid item xs={12} id='map-grid-container' className={classes.map}>
         <Map layers={[...layers, cityLayer, permitLayer]} />
