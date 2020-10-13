@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Map from './Map';
 import { makeStyles } from '@material-ui/core/styles';
-import { CircularProgress, Slider, Typography } from '@material-ui/core';
+import {
+  CircularProgress,
+  FormControl,
+  Slider,
+  Typography,
+} from '@material-ui/core';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import Grid from '@material-ui/core/Grid';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -12,6 +17,9 @@ import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
 import isBetween from 'dayjs/plugin/isBetween';
 import dayjs from 'dayjs';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
 
 dayjs.extend(isBetween);
 
@@ -160,6 +168,10 @@ const MapControls = () => {
   const [permitData, setPermitData] = useState([]);
   const [filteredPermitData, setFilteredPermitData] = useState([]);
   const [numberOfPermits, setNumberOfPermits] = useState(0);
+  const [mapStyle, setMapStyle] = useState({
+    name: 'Dark',
+    url: 'mapbox://styles/mapbox/dark-v10',
+  });
   const {
     data: nameData,
     loading: nameQueryLoading,
@@ -268,7 +280,7 @@ const MapControls = () => {
     data: filteredPermitData,
     pickable: true,
     stroked: true,
-    radiusMinPixels: 2,
+    radiusMinPixels: 2.5,
     getPosition: (d) => d.coordinates,
     getFillColor: (d) => [255, 0, 0],
   });
@@ -301,7 +313,12 @@ const MapControls = () => {
         <Typography variant='h6'>Map Controls</Typography>
         <hr className={classes.hr} />
         <Grid item xs={12}>
-          <div style={{ display: 'flex', marginBottom: 15 }}>
+          <div
+            style={{
+              display: 'flex',
+              marginBottom: 15,
+            }}
+          >
             <Autocomplete
               value={value}
               getOptionLabel={(option) => (option.name ? option.name : '')}
@@ -332,7 +349,23 @@ const MapControls = () => {
             >
               Select County
             </Button>
-            {countyQueryLoading && <div>...Loading County Data</div>}
+            <div style={{ marginLeft: 20 }}>
+              <FormControl>
+                <InputLabel>Map Style</InputLabel>
+                <Select
+                  lable='Map Style'
+                  value={mapStyle}
+                  onChange={(event, newValue) => {
+                    setMapStyle(newValue.props.value);
+                  }}
+                >
+                  {MapStyles.map((style) => {
+                    return <MenuItem value={style}>{style.name}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+              {countyQueryLoading && <div>...Loading County Data</div>}
+            </div>
           </div>
         </Grid>
         <Grid item xs={12}>
@@ -367,7 +400,7 @@ const MapControls = () => {
         </Grid>
       </Grid>
       <Grid item xs={12} id='map-grid-container' className={classes.map}>
-        <Map layers={[...layers, cityLayer, permitLayer]} />
+        <Map layers={[...layers, cityLayer, permitLayer]} mapStyle={mapStyle} />
       </Grid>
     </Grid>
   );

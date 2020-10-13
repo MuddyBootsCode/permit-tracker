@@ -14,7 +14,7 @@ const INITIAL_VIEW_STATE = {
   bearing: 0,
 };
 
-const Map = ({ layers = [] }) => {
+const Map = ({ layers = [], mapStyle }) => {
   const [viewPort, setViewPort] = React.useState({
     ...INITIAL_VIEW_STATE,
   });
@@ -55,7 +55,7 @@ const Map = ({ layers = [] }) => {
     >
       <StaticMap
         mapboxApiAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
-        mapStyle='mapbox://styles/mapbox/dark-v10'
+        mapStyle={mapStyle.url}
       />
       <div style={{ position: 'absolute', zIndex: 1, right: 10 }}>
         <NavigationControl />
