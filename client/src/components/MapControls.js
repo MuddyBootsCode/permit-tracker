@@ -10,6 +10,10 @@ import { cityOfMidland } from '../data/cityOfMidland';
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
+import isBetween from 'dayjs/plugin/isBetween';
+import dayjs from 'dayjs';
+
+dayjs.extend(isBetween);
 
 const useStyles = makeStyles((theme) => ({
   map: {
@@ -153,6 +157,9 @@ const MapControls = () => {
   const [dateRange, setDateRange] = useState([0, 365]);
   const [startDate, setStartDate] = useState('01/01/2017');
   const [endDate, setEndDate] = useState('12/31/2017');
+  const [permitData, setPermitData] = useState([]);
+  const [filteredPermitData, setFilteredPermitData] = useState([]);
+  const [numberOfPermits, setNumberOfPermits] = useState(0);
   const {
     data: nameData,
     loading: nameQueryLoading,
@@ -191,9 +198,13 @@ const MapControls = () => {
     setDateRange(newValue);
     setStartDate(valueLabelFormat(dateRange[0]));
     setEndDate(valueLabelFormat(dateRange[1]));
-  };
 
-  console.log(startDate, endDate);
+    const dateFilteredPermits = [...permitData].filter((d) =>
+      dayjs(d.submittedDate).isBetween(startDate, endDate)
+    );
+    setFilteredPermitData(dateFilteredPermits);
+    setNumberOfPermits(dateFilteredPermits.length);
+  };
 
   const cityLayer = new GeoJsonLayer({
     id: 'city-of-Midland',
@@ -217,7 +228,22 @@ const MapControls = () => {
         ? setCountyGeo(JSON.parse(County.County[0].geometry))
         : setCountyGeo('');
     }
-  }, [County]);
+
+    if (Permit) {
+      setNumberOfPermits(Permit.Permit.length);
+      const layerData = Permit.Permit.map((p) => {
+        const { surfaceHolePoint } = p;
+        return {
+          name: p.PermitType,
+          coordinates: [surfaceHolePoint.longitude, surfaceHolePoint.latitude],
+          submittedDate: p.submittedDate.date.split('T')[0],
+          approvedDate: p.approvedDate.date.split('T')[0],
+        };
+      });
+      setPermitData(layerData);
+      setFilteredPermitData(layerData);
+    }
+  }, [County, Permit]);
 
   if (permitQueryLoading || nameQueryLoading)
     return (
@@ -237,19 +263,9 @@ const MapControls = () => {
   if (countyQueryError || permitQueryError || nameQueryError)
     return <div>Something went wrong</div>;
 
-  const layerData = Permit.Permit.map((p) => {
-    const { surfaceHolePoint } = p;
-    return {
-      name: p.PermitType,
-      coordinates: [surfaceHolePoint.longitude, surfaceHolePoint.latitude],
-      submittedDate: p.submittedDate.date.split('T')[0],
-      approvedDate: p.approvedDate.date.split('T')[0],
-    };
-  });
-
   const permitLayer = new ScatterplotLayer({
     id: 'permit-layer',
-    data: layerData,
+    data: filteredPermitData,
     pickable: true,
     stroked: true,
     radiusMinPixels: 4,
@@ -330,7 +346,7 @@ const MapControls = () => {
             }}
           >
             Permit Date Range - 2017 <br /> Start Date: {startDate} <br /> End
-            Date: {endDate}
+            Date: {endDate} <br /> Number of Permits in Range: {numberOfPermits}
           </Typography>
           <br />
           <br />
@@ -356,5 +372,4 @@ const MapControls = () => {
     </Grid>
   );
 };
-
 export default MapControls;
