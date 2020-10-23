@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
+import ColumnChart from './ColumnChart';
 
 dayjs.extend(isBetween);
 
@@ -131,6 +132,7 @@ const PERMIT_QUERY = gql`
   query {
     Permit {
       PermitType
+      OperatorAlias
       surfaceHolePoint {
         latitude
         longitude
@@ -149,18 +151,29 @@ const PERMIT_QUERY = gql`
   }
 `;
 
-function IsJsonString(str) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
-}
+const geoLayer = (geoData) => {
+  return new GeoJsonLayer({
+    id: 'county-layer',
+    data: geoData,
+    pickable: true,
+    stroked: true,
+    lineWidthMinPixels: 2,
+    filled: false,
+    getLineColor: [52, 168, 50],
+  });
+};
+
+const randomBetween = (min = 0, max = 255) =>
+  min + Math.floor(Math.random() * (max - min + 1));
 
 const MapControls = () => {
   const classes = useStyles();
-  const [value, setValue] = useState('Anderson');
+  const [mapLayers, setMapLayers] = useState([]);
+  const [countyValue, setCountyValue] = useState('Anderson');
+  const [featureLayer, setFeatureLayer] = useState({
+    type: 'FeatureCollection',
+    features: [],
+  });
   const [inputValue, setInputValue] = useState('');
   const [dateRange, setDateRange] = useState([0, 365]);
   const [startDate, setStartDate] = useState('01/01/2017');
@@ -179,21 +192,36 @@ const MapControls = () => {
   } = useQuery(ALL_COUNTY_QUERY);
   const [
     getCounty,
-    { data: County, loading: countyQueryLoading, error: countyQueryError },
-  ] = useLazyQuery(COUNTY_QUERY);
+    { loading: countyQueryLoading, error: countyQueryError },
+  ] = useLazyQuery(COUNTY_QUERY, {
+    onCompleted: (data) => {
+      const newFeatureLayer = {
+        ...featureLayer,
+        features: [
+          ...featureLayer.features,
+          {
+            type: 'Feature',
+            properties: {
+              name: countyValue.name,
+            },
+            geometry: JSON.parse(data.County[0].geometry),
+          },
+        ],
+      };
+      setFeatureLayer(newFeatureLayer);
+      let newLayer = geoLayer(newFeatureLayer);
+      setMapLayers([...mapLayers, newLayer]);
+    },
+  });
   const {
     data: Permit,
     loading: permitQueryLoading,
     error: permitQueryError,
   } = useQuery(PERMIT_QUERY);
-  const [countyGeo, setCountyGeo] = useState(null);
-
-  const layers = [];
 
   const valueLabelFormat = (dateRange) => {
     const date = new Date(2017, 0, dateRange);
-    const newString = date.toLocaleDateString();
-    return newString;
+    return date.toLocaleDateString();
   };
 
   const ValueLabelComponent = (props) => {
@@ -221,41 +249,41 @@ const MapControls = () => {
   const cityLayer = new GeoJsonLayer({
     id: 'city-of-Midland',
     data: cityOfMidland,
+    pickable: true,
     stroked: true,
     lineWidthMinPixels: 1,
     filled: false,
     getLineColor: [0, 0, 250],
   });
 
-  const queryCountyGeo = async (value) => {
-    const { name } = value;
-    await getCounty({
-      variables: { name },
-    });
-  };
-
   useEffect(() => {
-    if (County) {
-      IsJsonString(County.County[0].geometry)
-        ? setCountyGeo(JSON.parse(County.County[0].geometry))
-        : setCountyGeo('');
-    }
-
     if (Permit) {
       setNumberOfPermits(Permit.Permit.length);
+      const OperatorColors = {};
+      let operators = new Set(Permit.Permit.map((p) => p.OperatorAlias));
+      [...operators].forEach((o) => {
+        OperatorColors[`${o}`] = [
+          randomBetween(),
+          randomBetween(),
+          randomBetween(),
+        ];
+      });
       const layerData = Permit.Permit.map((p) => {
         const { surfaceHolePoint } = p;
         return {
+          type: 'Permit',
           name: p.PermitType,
           coordinates: [surfaceHolePoint.longitude, surfaceHolePoint.latitude],
           submittedDate: p.submittedDate.date.split('T')[0],
           approvedDate: p.approvedDate.date.split('T')[0],
+          Operator: p.OperatorAlias,
+          color: OperatorColors[p.OperatorAlias],
         };
       });
       setPermitData(layerData);
       setFilteredPermitData(layerData);
     }
-  }, [County, Permit]);
+  }, [Permit]);
 
   if (permitQueryLoading || nameQueryLoading)
     return (
@@ -268,12 +296,17 @@ const MapControls = () => {
           width: '100vw',
         }}
       >
-        <CircularProgress size={100} />
+        <CircularProgress size={200} />
       </div>
     );
 
-  if (countyQueryError || permitQueryError || nameQueryError)
+  if (permitQueryError || nameQueryError || countyQueryError)
     return <div>Something went wrong</div>;
+
+  const countyNames = nameData.County.map((c, index) => ({
+    name: c.name,
+    id: index,
+  }));
 
   const permitLayer = new ScatterplotLayer({
     id: 'permit-layer',
@@ -282,25 +315,8 @@ const MapControls = () => {
     stroked: true,
     radiusMinPixels: 2.5,
     getPosition: (d) => d.coordinates,
-    getFillColor: (d) => [255, 0, 0],
+    getFillColor: (d) => d.color,
   });
-
-  if (County) {
-    const countyLayer = new GeoJsonLayer({
-      id: 'county-layer',
-      data: countyGeo,
-      stroked: true,
-      lineWidthMinPixels: 2,
-      filled: false,
-      getLineColor: [52, 168, 50],
-    });
-    layers.push(countyLayer);
-  }
-
-  const countyNames = nameData.County.map((c, index) => ({
-    name: c.name,
-    id: index,
-  }));
 
   return (
     <Grid container spacing={0} className={classes.root} id='map-controls'>
@@ -320,16 +336,16 @@ const MapControls = () => {
             }}
           >
             <Autocomplete
-              value={value}
+              value={countyValue}
               getOptionLabel={(option) => (option.name ? option.name : '')}
               onChange={(event, newValue) => {
-                setValue(newValue);
+                setCountyValue(newValue);
               }}
               inputValue={inputValue}
               onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);
               }}
-              id='controllable-states-demo'
+              id='county-auto-complete'
               options={countyNames}
               style={{ width: 300 }}
               renderInput={(params) => (
@@ -344,7 +360,10 @@ const MapControls = () => {
               variant='contained'
               color='primary'
               className={classes.button}
-              onClick={() => queryCountyGeo(value)}
+              disabled={countyQueryLoading}
+              onClick={() =>
+                getCounty({ variables: { name: countyValue.name } })
+              }
               style={{ marginLeft: 15 }}
             >
               Select County
@@ -360,11 +379,14 @@ const MapControls = () => {
                   }}
                 >
                   {MapStyles.map((style) => {
-                    return <MenuItem value={style}>{style.name}</MenuItem>;
+                    return (
+                      <MenuItem value={style} key={style.name}>
+                        {style.name}
+                      </MenuItem>
+                    );
                   })}
                 </Select>
               </FormControl>
-              {countyQueryLoading && <div>...Loading County Data</div>}
             </div>
           </div>
         </Grid>
@@ -398,9 +420,16 @@ const MapControls = () => {
             />
           </div>
         </Grid>
+        <Grid item xs={12}>
+          <ColumnChart />
+        </Grid>
       </Grid>
+
       <Grid item xs={12} id='map-grid-container' className={classes.map}>
-        <Map layers={[...layers, cityLayer, permitLayer]} mapStyle={mapStyle} />
+        <Map
+          layers={[...mapLayers, permitLayer, cityLayer]}
+          mapStyle={mapStyle}
+        />
       </Grid>
     </Grid>
   );

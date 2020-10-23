@@ -10,6 +10,7 @@ type Permit {
     PermitType: String
     approvedDate: ApprovedDate @relation(name: "APPROVED_ON", direction: "OUT")
     submittedDate: SubmittedDate @relation(name: "SUBMITTED_ON", direction: "OUT")
+    OperatorAlias: String
 }
 
 type County {
