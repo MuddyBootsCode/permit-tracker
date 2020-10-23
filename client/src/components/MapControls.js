@@ -163,12 +163,13 @@ const geoLayer = (geoData) => {
   });
 };
 
-const randomBetween = (min = 0, max = 255) =>
+const randomBetween = (min = 50, max = 255) =>
   min + Math.floor(Math.random() * (max - min + 1));
 
 const MapControls = () => {
   const classes = useStyles();
   const [mapLayers, setMapLayers] = useState([]);
+  // const [operatorFilter, setOperatorFilter] = useState('');
   const [countyValue, setCountyValue] = useState('Anderson');
   const [featureLayer, setFeatureLayer] = useState({
     type: 'FeatureCollection',
@@ -243,9 +244,18 @@ const MapControls = () => {
     const dateFilteredPermits = [...permitData].filter((d) =>
       dayjs(d.submittedDate).isBetween(startDate, endDate)
     );
+
     setFilteredPermitData(dateFilteredPermits);
     setNumberOfPermits(dateFilteredPermits.length);
   };
+
+  // const filterByOperator = (operator) => {
+  //   setOperatorFilter(operator);
+  //   const updatedData = [...filteredPermitData].filter(
+  //     (permit) => permit.operator === operatorFilter
+  //   );
+  //   console.log(updatedData);
+  // };
 
   const cityLayer = new GeoJsonLayer({
     id: 'city-of-Midland',
@@ -278,7 +288,7 @@ const MapControls = () => {
           coordinates: [surfaceHolePoint.longitude, surfaceHolePoint.latitude],
           submittedDate: p.submittedDate.date.split('T')[0],
           approvedDate: p.approvedDate.date.split('T')[0],
-          Operator: p.OperatorAlias,
+          operator: p.OperatorAlias,
           color: OperatorColors[p.OperatorAlias],
         };
       });
@@ -390,21 +400,22 @@ const MapControls = () => {
                 </Select>
               </FormControl>
             </div>
+            <Typography
+              id='range-slider'
+              gutterBottom
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              Permit Date Range - 2017 <br /> Start Date: {startDate} <br /> End
+              Date: {endDate} <br /> Number of Permits in Range:{' '}
+              {numberOfPermits}
+            </Typography>
           </div>
         </Grid>
         <Grid item xs={12}>
-          <Typography
-            id='range-slider'
-            gutterBottom
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            Permit Date Range - 2017 <br /> Start Date: {startDate} <br /> End
-            Date: {endDate} <br /> Number of Permits in Range: {numberOfPermits}
-          </Typography>
           <br />
           <br />
           <div>
@@ -413,7 +424,7 @@ const MapControls = () => {
               onChange={dateValueChange}
               valueLabelDisplay='off'
               ValueLabelComponent={ValueLabelComponent}
-              style={{ width: 600 }}
+              style={{ width: 800 }}
               valueLabelFormat={valueLabelFormat}
               max={365}
               min={1}
@@ -423,7 +434,11 @@ const MapControls = () => {
           </div>
         </Grid>
         <Grid item xs={12}>
-          <ColumnChart data={filteredPermitData} operators={operators} />
+          <ColumnChart
+            data={filteredPermitData}
+            operators={operators}
+            // filter={filterByOperator}
+          />
         </Grid>
       </Grid>
 

@@ -51,7 +51,7 @@ const Map = ({ layers = [], mapStyle }) => {
         if (object && object.type === 'Permit') {
           return {
             html: `
-              <div>Operator: ${object.Operator}</div>
+              <div>Operator: ${object.operator}</div>
               <div>Permit Type: ${object.name}
               <br/>Lat: ${!object.coordinates ? 'N/A' : object.coordinates[1]}
               <br/>Long: ${!object.coordinates ? 'N/A' : object.coordinates[0]}

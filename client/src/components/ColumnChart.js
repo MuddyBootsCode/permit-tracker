@@ -9,14 +9,14 @@ import {
   YAxis,
 } from 'recharts';
 
-const ColumnChart = ({ data, operators }) => {
+const ColumnChart = ({ data, operators, filter }) => {
   const chartData = useMemo(
     () =>
       operators
         .map((operator) => {
           let color = '';
           const total = data.reduce((accumulator, record) => {
-            if (record.Operator === operator) {
+            if (record.operator === operator) {
               accumulator += 1;
               color = `rgb(${record.color.join(',')})`;
             }
@@ -35,8 +35,6 @@ const ColumnChart = ({ data, operators }) => {
     [data]
   );
 
-  console.log(chartData);
-
   return (
     <BarChart
       width={1200}
@@ -51,7 +49,13 @@ const ColumnChart = ({ data, operators }) => {
       <Bar dataKey='permits'>
         {chartData.map((entry, index) => {
           if (entry) {
-            return <Cell key={`cell-${index}`} fill={entry.color} />;
+            return (
+              <Cell
+                key={`cell-${index}`}
+                fill={entry.color}
+                onClick={() => filter(entry.name)}
+              />
+            );
           }
         })}
       </Bar>
