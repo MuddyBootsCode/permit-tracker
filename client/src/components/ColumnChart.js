@@ -1,44 +1,48 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  Cell,
-  CartesianGrid,
 } from 'recharts';
 
 const ColumnChart = ({ data, operators }) => {
-  const chartData = [];
-  console.log(data, ' filtered permit data');
+  const chartData = useMemo(
+    () =>
+      operators
+        .map((operator) => {
+          let color = '';
+          const total = data.reduce((accumulator, record) => {
+            if (record.Operator === operator) {
+              accumulator += 1;
+              color = `rgb(${record.color.join(',')})`;
+            }
+            return accumulator;
+          }, 0);
 
-  operators.forEach((operator) => {
-    let color = '';
-    const total = data.reduce((accumulator, record) => {
-      if (record.Operator === operator) {
-        accumulator += 1;
-        color = `rgb(${record.color.join(',')})`;
-      }
-      return accumulator;
-    }, 0);
+          if (total !== 0) {
+            return {
+              name: operator,
+              permits: total,
+              color,
+            };
+          }
+        })
+        .sort((a, b) => b.permits - a.permits),
+    [data]
+  );
 
-    if (total !== 0) {
-      const row = {
-        name: operator,
-        permits: total,
-        color,
-      };
-      chartData.push(row);
-    }
-  });
+  console.log(chartData);
 
   return (
     <BarChart
       width={1200}
       height={300}
-      data={chartData.sort((a, b) => b.permits - a.permits)}
-      margin={{ top: 10, right: 30, left: 20, bottom: 200 }}
+      data={chartData.filter((i) => i !== undefined)}
+      margin={{ top: 10, right: 30, left: 40, bottom: 200 }}
     >
       <CartesianGrid strokeDasharray='3 3' />
       <XAxis dataKey='name' angle={-40} textAnchor='end' interval={0} />
@@ -46,7 +50,9 @@ const ColumnChart = ({ data, operators }) => {
       <Tooltip />
       <Bar dataKey='permits'>
         {chartData.map((entry, index) => {
-          return <Cell key={`cell-${index}`} fill={entry.color} />;
+          if (entry) {
+            return <Cell key={`cell-${index}`} fill={entry.color} />;
+          }
         })}
       </Bar>
     </BarChart>
