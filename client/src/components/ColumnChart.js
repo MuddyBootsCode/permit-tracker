@@ -37,7 +37,7 @@ const ColumnChart = ({ data, operators }) => {
     <BarChart
       width={1200}
       height={300}
-      data={chartData}
+      data={chartData.sort((a, b) => b.permits - a.permits)}
       margin={{ top: 10, right: 30, left: 20, bottom: 200 }}
     >
       <CartesianGrid strokeDasharray='3 3' />
