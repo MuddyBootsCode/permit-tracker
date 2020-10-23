@@ -38,16 +38,14 @@ const ColumnChart = ({ data, operators }) => {
       width={1200}
       height={300}
       data={chartData}
-      margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
+      margin={{ top: 10, right: 30, left: 20, bottom: 200 }}
     >
       <CartesianGrid strokeDasharray='3 3' />
-      <XAxis dataKey='name' />
+      <XAxis dataKey='name' angle={-40} textAnchor='end' interval={0} />
       <YAxis />
       <Tooltip />
       <Bar dataKey='permits'>
-        {chartData.map((entry, index, props) => {
-          // console.log(entry);
-          // console.log(props);
+        {chartData.map((entry, index) => {
           return <Cell key={`cell-${index}`} fill={entry.color} />;
         })}
       </Bar>
