@@ -1,8 +1,17 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Cell,
+  CartesianGrid,
+} from 'recharts';
 
 const ColumnChart = ({ data, operators }) => {
   const chartData = [];
+  console.log(data, ' filtered permit data');
 
   operators.forEach((operator) => {
     let color = '';
@@ -14,21 +23,24 @@ const ColumnChart = ({ data, operators }) => {
       return accumulator;
     }, 0);
 
-    const row = {
-      name: operator,
-      permits: total,
-      color,
-    };
-    chartData.push(row);
+    if (total !== 0) {
+      const row = {
+        name: operator,
+        permits: total,
+        color,
+      };
+      chartData.push(row);
+    }
   });
 
   return (
     <BarChart
       width={1200}
       height={300}
-      data={chartData.filter((bar) => bar.permits !== 0)}
+      data={chartData}
       margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
     >
+      <CartesianGrid strokeDasharray='3 3' />
       <XAxis dataKey='name' />
       <YAxis />
       <Tooltip />
