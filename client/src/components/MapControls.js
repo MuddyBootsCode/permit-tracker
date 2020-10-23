@@ -181,6 +181,7 @@ const MapControls = () => {
   const [permitData, setPermitData] = useState([]);
   const [filteredPermitData, setFilteredPermitData] = useState([]);
   const [numberOfPermits, setNumberOfPermits] = useState(0);
+  const [operators, setOperators] = useState([]);
   const [mapStyle, setMapStyle] = useState({
     name: 'Dark',
     url: 'mapbox://styles/mapbox/dark-v10',
@@ -261,6 +262,7 @@ const MapControls = () => {
       setNumberOfPermits(Permit.Permit.length);
       const OperatorColors = {};
       let operators = new Set(Permit.Permit.map((p) => p.OperatorAlias));
+      setOperators([...operators]);
       [...operators].forEach((o) => {
         OperatorColors[`${o}`] = [
           randomBetween(),
@@ -421,7 +423,7 @@ const MapControls = () => {
           </div>
         </Grid>
         <Grid item xs={12}>
-          <ColumnChart />
+          <ColumnChart data={filteredPermitData} operators={operators} />
         </Grid>
       </Grid>
 
