@@ -1201,7 +1201,7 @@
     d3-dsv "^1.0.8"
     expression-eval "^2.0.0"
 
-"@deck.gl/layers@8.2.9", "@deck.gl/layers@^8.2.9":
+"@deck.gl/layers@8.2.9":
   version "8.2.9"
   resolved "https://registry.yarnpkg.com/@deck.gl/layers/-/layers-8.2.9.tgz#fee73ad3a649b1a86152764c8b813c7e446a4465"
   integrity sha512-oufFg92nstGGuMfuEz1TD6J5Np3ouG1PzXx+q6ytQj9fNQmJKJw3V2YmL+SxhJSKtPOqKAa1lx1ntmV7NJ5dEQ==

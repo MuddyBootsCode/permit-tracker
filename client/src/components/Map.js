@@ -31,46 +31,46 @@ const Map = ({ layers = [], mapStyle }) => {
       initialViewState={viewPort}
       height={'100vh'}
       width={'100vw'}
-      getTooltip={({ object }) => {
-        if (
-          object &&
-          object.type === 'Feature' &&
-          object.properties.border_type === 'city'
-        ) {
-          return {
-            html: `<div>${object.properties.name} City Limit</div>`,
-          };
-        }
-
-        if (object && object.type === 'Feature') {
-          return {
-            html: `<div> ${object.properties.name} County</div>`,
-          };
-        }
-
-        if (object && object.type === 'Permit') {
-          return {
-            html: `
-              <div>Operator: ${object.operator}</div>
-              <div>Permit Type: ${object.name}
-              <br/>Lat: ${!object.coordinates ? 'N/A' : object.coordinates[1]}
-              <br/>Long: ${!object.coordinates ? 'N/A' : object.coordinates[0]}
-              <br/>Submitted Date: ${
-                !object.submittedDate ? 'N/A' : object.submittedDate
-              }
-              <br/>Approved Date: ${
-                !object.approvedDate ? 'N/A' : object.approvedDate
-              }
-              </div>`,
-            style: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              color: 'white',
-            },
-          };
-        }
-      }}
+      // getTooltip={({ object }) => {
+      //   if (
+      //     object &&
+      //     object.type === 'Feature' &&
+      //     object.properties.border_type === 'city'
+      //   ) {
+      //     return {
+      //       html: `<div>${object.properties.name} City Limit</div>`,
+      //     };
+      //   }
+      //
+      //   if (object && object.type === 'Feature') {
+      //     return {
+      //       html: `<div> ${object.properties.name} County</div>`,
+      //     };
+      //   }
+      //
+      //   if (object && object.type === 'Permit') {
+      //     return {
+      //       html: `
+      //         <div>Operator: ${object.operator}</div>
+      //         <div>Permit Type: ${object.name}
+      //         <br/>Lat: ${!object.coordinates ? 'N/A' : object.coordinates[1]}
+      //         <br/>Long: ${!object.coordinates ? 'N/A' : object.coordinates[0]}
+      //         <br/>Submitted Date: ${
+      //           !object.submittedDate ? 'N/A' : object.submittedDate
+      //         }
+      //         <br/>Approved Date: ${
+      //           !object.approvedDate ? 'N/A' : object.approvedDate
+      //         }
+      //         </div>`,
+      //       style: {
+      //         display: 'flex',
+      //         justifyContent: 'center',
+      //         alignItems: 'center',
+      //         color: 'white',
+      //       },
+      //     };
+      //   }
+      // }}
     >
       <StaticMap
         mapboxApiAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
